@@ -12,6 +12,7 @@ function App() {
     isSignedIn: false,
     name: "",
     email: "",
+    password: "",
     photo: "",
   });
   const provider = new firebase.auth.GoogleAuthProvider();
@@ -50,6 +51,28 @@ function App() {
       })
       .catch((err) => {});
   };
+  const handleblar = (event) => {
+    let isFildValied = true;
+    if (event.target.name === "email") {
+      isFildValied = /\S+@\S+\.\S+/.test(event.target.value);
+    }
+    if (event.target.name === "password") {
+      const isPasswordValid = event.target.value.length > 8;
+      const passwordHashNumber = /\d{1}/.test(event.target.value);
+      isFildValied = isPasswordValid && passwordHashNumber;
+    }
+    if (isFildValied) {
+      const newUserInfo = { ...user };
+      newUserInfo[event.target.name] = event.target.value;
+      setUser(newUserInfo);
+    }
+  };
+  const handleSubmitForm = (err) => {
+    console.log(user.email, user.password);
+    if (user.email && user.password) {
+    }
+    err.preventDefault();
+  };
   return (
     <div className="App">
       {user.isSignedIn ? (
@@ -68,6 +91,26 @@ function App() {
           <img src={user.photo} alt="" />
         </div>
       )}
+      <h1>Our One Authentication</h1>
+      <form onSubmit={handleSubmitForm}>
+        <input
+          type="text"
+          onBlur={handleblar}
+          name="email"
+          placeholder="Your Email Address"
+          required
+        />
+        <br />
+        <input
+          type="password"
+          onBlur={handleblar}
+          name="password"
+          placeholder="Your password"
+          required
+        />
+        <br />
+        <input type="submit" value="Submit" />
+      </form>
     </div>
   );
 }
