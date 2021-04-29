@@ -14,6 +14,8 @@ function App() {
     email: "",
     password: "",
     photo: "",
+    error: "",
+    success: false,
   });
   const provider = new firebase.auth.GoogleAuthProvider();
 
@@ -70,6 +72,22 @@ function App() {
   const handleSubmitForm = (err) => {
     console.log(user.email, user.password);
     if (user.email && user.password) {
+      firebase
+        .auth()
+        .createUserWithEmailAndPassword(user.email, user.password)
+        .then((res) => {
+          const newUserInfo = { ...user };
+          newUserInfo.error = " ";
+          newUserInfo.success = true;
+          setUser(newUserInfo);
+        })
+        .catch((error) => {
+          const newUserInfo = { ...user };
+          newUserInfo.error = error.message;
+          newUserInfo.success = false;
+          setUser(newUserInfo);
+          // let errorMessage = error.message;
+        });
     }
     err.preventDefault();
   };
@@ -91,7 +109,7 @@ function App() {
           <img src={user.photo} alt="" />
         </div>
       )}
-      <h1>Our One Authentication</h1>
+      <h1>Our own Authentication</h1>
       <form onSubmit={handleSubmitForm}>
         <input
           type="text"
@@ -111,6 +129,11 @@ function App() {
         <br />
         <input type="submit" value="Submit" />
       </form>
+      <br />
+      <h3 style={{ color: "red" }}>{user.error}</h3>
+      {user.password && (
+        <h3 style={{ color: "green" }}>User Created Successfully !</h3>
+      )}
     </div>
   );
 }
