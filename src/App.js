@@ -81,6 +81,7 @@ function App() {
           newUserInfo.error = " ";
           newUserInfo.success = true;
           setUser(newUserInfo);
+          updateUserName(user.name);
         })
         .catch((error) => {
           const newUserInfo = { ...user };
@@ -100,6 +101,7 @@ function App() {
           newUserInfo.error = " ";
           newUserInfo.success = true;
           setUser(newUserInfo);
+          console.log("Signed In userInfo", res.user);
           // ...
         })
         .catch((error) => {
@@ -111,6 +113,23 @@ function App() {
     }
     err.preventDefault();
   };
+  const updateUserName = (name) => {
+    const user = firebase.auth().currentUser;
+
+    user
+      .updateProfile({
+        displayName: name,
+      })
+      .then(function () {
+        // Update successful.
+        console.log("Name Update successfully");
+      })
+      .catch(function (error) {
+        // An error happened.
+        console.log(error);
+      });
+  };
+
   return (
     <div className="App">
       {user.isSignedIn ? (
@@ -139,6 +158,7 @@ function App() {
         }}
       />
       <label htmlFor="newUser">Registration for New user</label>
+
       <form onSubmit={handleSubmitForm}>
         {newUser && (
           <input
@@ -165,7 +185,7 @@ function App() {
           required
         />
         <br />
-        <input type="submit" value="Submit" />
+        <input type="submit" value={!newUser ? "Sign In" : "Sign Up"} />
       </form>
       <br />
       <h3 style={{ color: "red" }}>{user.error}</h3>
